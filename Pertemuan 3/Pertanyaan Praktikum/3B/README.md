@@ -9,7 +9,7 @@ Konfigurasi pin potensiometer tidak mutlak, tetapi harus mengikuti prinsip pemba
 Kaki tengah tetap sebagai output ke pin analog Arduino, sedangkan dua kaki lainnya ke 5V dan GND.
 Jika pin kiri dan kanan ditukar, hasil pembacaan tetap bekerja, tetapi arah perubahan nilai akan terbalik (misalnya diputar ke kanan malah nilai mengecil).
 
-4. Modifikasi program dengan menggabungkan antara UART dan I2C (keduanya sebagai output) sehingga:
+3. Modifikasi program dengan menggabungkan antara UART dan I2C (keduanya sebagai output) sehingga:
 - Data tidak hanya ditampilkan di LCD tetapi juga di Serial Monitor
 - Adapun data yang ditampilkan pada Serial Monitor sesuai dengan table berikut:
 <table>
