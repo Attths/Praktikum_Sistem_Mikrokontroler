@@ -19,9 +19,9 @@ Jika pin kiri dan kanan ditukar, hasil pembacaan tetap bekerja, tetapi arah peru
     <td>Persen: 0%</td>
   </tr>
 </table>
-Tampilan jika potensiometer dalam kondisi diputar paling kiri
-- ADC: 0 0% | setCursor(0, 0) dan Bar (level) | setCursor(0, 1)
-- Berikan penjelasan disetiap baris kode nya dalam bentuk README.md!
+Tampilan jika potensiometer dalam kondisi diputar paling kiri <br>
+ADC: 0 0% | setCursor(0, 0) dan Bar (level) | setCursor(0, 1) <br>
+Berikan penjelasan disetiap baris kode nya dalam bentuk README.md!
 
 4. Lengkapi table berikut berdasarkan pengamatan pada Serial Monitor
 <table>
