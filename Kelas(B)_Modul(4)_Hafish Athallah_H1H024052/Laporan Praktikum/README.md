@@ -17,8 +17,7 @@ Hal ini berguna untuk membatasi pergerakan servo agar lebih sesuai dengan kebutu
 </ol>
 
 <p><b>Source Code Nomor 3</b></p>
-```
-#include <Servo.h>
+```#include <Servo.h>
 
 Servo myservo;
 
