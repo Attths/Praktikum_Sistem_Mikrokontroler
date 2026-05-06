@@ -16,7 +16,6 @@
 Hal ini berguna untuk membatasi pergerakan servo agar lebih sesuai dengan kebutuhan sistem atau untuk menghindari gerakan ekstrem yang tidak diperlukan.</li>
 </ol>
 
-<p><b>Source Code Nomor 3</b></p>
 ```cpp
 #include <Servo.h>
 
