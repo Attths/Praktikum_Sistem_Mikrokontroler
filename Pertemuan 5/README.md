@@ -17,13 +17,14 @@
   <li>
     Task keempat dapat ditambahkan dengan membuat fungsi task baru kemudian mendaftarkannya menggunakan fungsi xTaskCreate() pada setup(). Langkah-langkahnya sebagai berikut: <br>
     1. Membuat fungsi task baru, misalnya: <br>
+    
     ```cpp
     void task4(void *pvParameters) {
     for(;;) {
     Serial.println("Task 4 berjalan");
     vTaskDelay(1000 / portTICK_PERIOD_MS);
-  }
-}
+    }
+    }
     ```
   </li>
 </ol>
