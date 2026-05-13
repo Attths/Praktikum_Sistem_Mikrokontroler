@@ -115,6 +115,8 @@ Task pertama bertugas membaca data suhu dan kelembapan dari sensor DHT22 menggun
 </ol>
 
 <p>Code programnya:</p>
+
+```cpp
 #include <Arduino_FreeRTOS.h>
 #include <queue.h>
 #include <DHT.h>
@@ -210,6 +212,5 @@ void TaskDisplay(void *pvParameters) {
     }
   }
 }
-```cpp
 
 ```
