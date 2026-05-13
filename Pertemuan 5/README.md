@@ -82,3 +82,134 @@ void taskPotensiometer(void *pvParameters) {
   }
 }
 ```
+<h2>Pertanyaan Praktikum 5B: Komunikasi Data</h2>
+<ol>
+  <li>Apakah kedua task berjalan secara bersamaan atau bergantian? Jelaskan mekanismenya!</li>
+  <li>Apakah program ini berpotensi mengalami race condition? Jelaskan!</li>
+  <li>Modifikasilah program dengan menggunakan sensor DHT sesungguhnya sehingga informasi yang ditampilkan dinamis. Bagaimana hasilnya?</li>
+</ol>
+
+<p><b>Jawaban:</b></p>
+<ol>
+  <li>
+  Kedua task pada FreeRTOS berjalan secara bergantian (concurrent), bukan benar-benar bersamaan, karena Arduino Uno hanya memiliki satu inti prosesor. Scheduler pada FreeRTOS mengatur  pembagian waktu eksekusi untuk setiap task sehingga task terlihat berjalan secara bersamaan.
+
+Pada program komunikasi task, task pertama bertugas membaca data sensor DHT22 dan mengirimkannya ke queue menggunakan xQueueSend(). Setelah itu task akan menjalankan vTaskDelay() sehingga status task menjadi blocked sementara. Scheduler kemudian memindahkan eksekusi ke task kedua yang bertugas menerima data dari queue menggunakan xQueueReceive() dan menampilkannya pada Serial Monitor.
+
+Perpindahan eksekusi antar task berlangsung sangat cepat melalui mekanisme context switching sehingga proses pembacaan sensor dan penampilan data dapat berjalan secara teratur tanpa saling mengganggu.
+</li>
+
+<li>
+Program ini memiliki kemungkinan race condition yang sangat kecil karena komunikasi data antar task dilakukan menggunakan queue pada FreeRTOS. Queue berfungsi sebagai media komunikasi yang aman sehingga data dikirim dan diterima secara terstruktur.
+
+Task pembaca sensor tidak langsung mengakses data milik task display, melainkan mengirim data terlebih dahulu ke queue menggunakan xQueueSend(). Selanjutnya task display mengambil data tersebut menggunakan xQueueReceive(). Mekanisme ini mencegah kedua task mengakses data yang sama secara bersamaan.
+
+Race condition biasanya terjadi jika beberapa task mengakses variabel global yang sama tanpa mekanisme sinkronisasi. Namun pada program ini, penggunaan queue membuat pertukaran data menjadi lebih aman sehingga konflik akses data dapat dihindari.
+</li>
+
+<li>
+  Pada percobaan ini digunakan sensor DHT22 asli yang dihubungkan ke Arduino Uno untuk membaca data suhu dan kelembapan udara secara real-time. Sistem terdiri dari dua task, yaitu task pembaca sensor dan task display dengan komunikasi data menggunakan queue.
+
+Task pertama bertugas membaca data suhu dan kelembapan dari sensor DHT22 menggunakan library DHT.h. Setelah data berhasil dibaca, nilai suhu dan kelembapan dikirim ke queue menggunakan fungsi xQueueSend(). Selanjutnya task kedua menerima data dari queue menggunakan xQueueReceive() dan menampilkannya pada Serial Monitor.
+</li>
+</ol>
+
+<p>Code programnya:</p>
+#include <Arduino_FreeRTOS.h>
+#include <queue.h>
+#include <DHT.h>
+
+#define DHTPIN 2
+#define DHTTYPE DHT22
+
+DHT dht(DHTPIN, DHTTYPE);
+
+struct SensorData {
+  float temperature;
+  float humidity;
+};
+
+QueueHandle_t sensorQueue;
+
+void TaskReadSensor(void *pvParameters);
+void TaskDisplay(void *pvParameters);
+
+void setup() {
+
+  Serial.begin(9600);
+
+  dht.begin();
+
+  sensorQueue = xQueueCreate(5, sizeof(SensorData));
+
+  xTaskCreate(
+    TaskReadSensor,
+    "Read Sensor",
+    128,
+    NULL,
+    1,
+    NULL
+  );
+
+  xTaskCreate(
+    TaskDisplay,
+    "Display Data",
+    128,
+    NULL,
+    1,
+    NULL
+  );
+}
+
+void loop() {
+}
+
+// =======================
+// TASK MEMBACA SENSOR
+// =======================
+void TaskReadSensor(void *pvParameters) {
+
+  SensorData data;
+
+  for(;;) {
+
+    data.temperature = dht.readTemperature();
+    data.humidity = dht.readHumidity();
+
+    if (!isnan(data.temperature) && !isnan(data.humidity)) {
+
+      xQueueSend(sensorQueue, &data, portMAX_DELAY);
+    }
+
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+  }
+}
+
+// =======================
+// TASK DISPLAY DATA
+// =======================
+void TaskDisplay(void *pvParameters) {
+
+  SensorData data;
+
+  for(;;) {
+
+    if (xQueueReceive(sensorQueue, &data, portMAX_DELAY) == pdPASS) {
+
+      Serial.println("===== DHT22 SENSOR =====");
+
+      Serial.print("Temperature : ");
+      Serial.print(data.temperature);
+      Serial.println(" C");
+
+      Serial.print("Humidity    : ");
+      Serial.print(data.humidity);
+      Serial.println(" %");
+
+      Serial.println("========================");
+    }
+  }
+}
+```cpp
+
+```
